@@ -3,25 +3,28 @@ Simple shell gpg password manager.
 
 ##How to: 
 
-Basically, you just create a gpg encrypted file with sections. 
-For example, if you wanted a section of "Forum Passwords", 
-just do something like this: 
+Create a password file with sections identified by headers. 
+For example: 
 
-====Forum Passwords=====
+=== Email ==
+
+email:pass
+
+=== END ===
 
 When you run the script, it will ask you to specify the gpg file
-of the script, ask for the password, decrypt it, prompt for a 
-header to search for, output everything after ====Forum Passwords====
-but before "END", and output it. 
+of the script, then invoke gpg to decrypt it. After that, it will prompt 
+you to check weather you want to search for a specific line to print, or
+a section. If you select 's' for a single line, you type the first name
+in the line, for example "email", and it'll print the whole line. If you
+select 'h' for header, then it will print the entire section. 
 
-So put all your passwords inbetween blocks of whatever header you want, 
-and wil remember to search for, and the END keyword. You can easily read
-the code and modify it to use a different end keyword or symbols or w/e. 
+The end of a section should be delimited with END. You can edit the script to
+change the end delimiter. 
 
 ## Planned Changes
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. Planned features: 
 
 * Create an encrypted file. 
-* Support for username:password delimited single line output from file. 
 * Adding and removing passwords to sections. 
