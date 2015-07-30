@@ -17,8 +17,12 @@ again() {
    if [[ $searchagain =~ [yY](es)* ]]  ; then
        search_function
    else
-       rm temp_pass.txt
-       exit
+       rm $txtpath
+       if [ -d "$dneramfs" ]; then
+          echo 'One more sudo to remove the ramfs.'
+          sudo umount dneramfs && rm -R dneramfs
+       fi
+      exit
    fi
 }
 
@@ -29,12 +33,12 @@ search_function() {
    if [[ $search =~ ^([hH])$ ]] ; then
 	   echo -n 'Type header name to search for: '
            read VAR
-           sed -n "/$VAR/,/END/p" temp_pass.txt
+           sed -n "/$VAR/,/END/p" $txtpath
 	   again
    elif [[ $search =~ ^([sS])$ ]] ; then
 	   echo -n 'Type username to search for: '
            read VVAR
-           sed -n "/^$VVAR/p" temp_pass.txt
+           sed -n "/^$VVAR/p" $txtpath
            again
    else
      echo 'Try again plz.'
@@ -42,8 +46,47 @@ search_function() {
    fi
 }
 
+check_tmp(){
+   line=$(df -T /tmp)
+   line=$(sed -n '/tmpfs/p' <<< $line)
+   if [ -z "$line" ] ; then
+      local result='0'
+      echo "$result"
+   else
+      result='1'
+      echo "$result"
+   fi 
+}
+
+check_shm(){
+   line=$(df -T /dev/shm)
+   line=$(sed -n '/tmpfs/p' <<< $line)
+   if [ -z "$line" ] ; then 
+      local aresult='0' 
+      echo "$aresult"
+   else 
+      local aresult='1' 
+      echo "$aresult"
+   fi 
+}
+
 echo -n "GPG Encrypted Password File Name: "
 read -e pwfile
-gpg --output temp_pass.txt --decrypt "$pwfile"
+tmpresult=$( check_tmp )
+if [ $tmpresult -eq 0 ] ; then
+   echo "/tmp is not a tmpfs, checking /dev/shm"
+   shmresult=$( check_shm )
+   if [ $shmresult -eq 0 ] ; then
+      echo 'No tmpfs found on your system. We need to create one using root.'
+      mkdir dneramfs
+      sudo mount -t ramfs -o size=10m ramfs dneramfs
+      txtpath='dneramfs/temp_file.txt'
+   else
+      txtpath='/dev/shm/temp_file.txt'
+   fi
+else
+   txtpath='/tmp/temp_file.txt'
+fi
+gpg --output $txtpath --decrypt "$pwfile"
 search_function
 
