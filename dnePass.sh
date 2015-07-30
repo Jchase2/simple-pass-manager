@@ -24,10 +24,22 @@ again() {
 
 
 search_function() {
-   echo -n 'Press 's' to searc: '
+   echo -n 'Press 'h' to search for a header, 's' to output a password line: (s/h): '
    read search
-   sed -n "/$search/,/END/p" temp_pass.txt
-   again
+   if [[ $search =~ ^([hH])$ ]] ; then
+	   echo -n 'Type header name to search for: '
+           read VAR
+           sed -n "/$VAR/,/END/p" temp_pass.txt
+	   again
+   elif [[ $search =~ ^([sS])$ ]] ; then
+	   echo -n 'Type username to search for: '
+           read VVAR
+           sed -n "/^$VVAR/p" temp_pass.txt
+           again
+   else
+     echo 'Try again plz.'
+     search_function
+   fi
 }
 
 echo -n "GPG Encrypted Password File Name: "
