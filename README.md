@@ -33,7 +33,6 @@ change the end delimiter.
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. Planned features: 
 
-* Automatic encrypted pw file backup.
 * Create encrypted file w/ standardized format. (maybe) 
 * Add passwords to sections
 * Remove passwords from sections
