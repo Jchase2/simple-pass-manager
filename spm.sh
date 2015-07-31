@@ -11,45 +11,95 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #Library General Public License for more details.
 
-#Exit or retry dialog.
+#Read in filename of GPG file.
 
-again() {
+GLOBV=""
+SGLOBV=""
+gpg_function(){
+  echo -n "GPG Encrypted Password File Name: "
+  read -e pwfile
+  PVAR=$(gpg --decrypt $pwfile)
+  welcome_function
+}
+
+backup_function(){
+  #lazy
+  
+  cp $pwfile pwfile.bak
+  if [ $? -gt 0 ]; then
+    echo "ERROR!"
+  else
+    echo "Success."
+  fi
+  welcome_function 
+}
+
+#welcome function
+welcome_function(){
+echo 'Welcome to simple-password-manager.'
+echo 'Type 's' to search for a string.'
+echo 'Type 'h' to search for a header.'
+echo 'Type 'b' to backup(copy) the encrypted file.'
+echo 'Type 'o' to open a different encrypted pw file.'
+echo 'Type 'q' to quit.'
+read -r -p "Command: " GLOBV
+input_function
+}
+
+again(){
    echo -n 'Search Again? (y/n): '
    read searchagain
    if [[ $searchagain =~ [yY](es)* ]]  ; then
-       search_function
+      echo 'Type 's' to search for a string.'
+      echo 'Type 'h' to search for a header.'
+      read -r -p "Command: " GLOBV
+      input_function
    else
-      unset PVAR
-      exit
+      welcome_function
    fi
 }
 
 
-#Searching
+input_function(){
+USRINPUT="$GLOBV"
+if [[ $USRINPUT  =~ ^([sS])$ ]] ; then
+   SGLOBV=0
+   search_function
+elif [[ $USRINPUT =~ ^([hH])$ ]] ; then
+   SGLOBV=1
+   search_function
+elif [[ $USRINPUT =~ ^([bB])$ ]] ; then
+   backup_function
+elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
+   gpg_function
+elif [[ $USRINPUT =~ ^([qQ])$ ]] ; then
+   unset PVAR
+   exit
+else
+   echo 'Bad input, try again.'
+   welcome_function
+fi
+}
+
 search_function() {
-   echo -n 'Press 'h' to search for a header, 's' to output a password line: (s/h): '
-   read search
-   if [[ $search =~ ^([hH])$ ]] ; then
-	   echo -n 'Type header name to search for: '
+   tmpresult="$SGLOBV"
+   if [ $tmpresult -eq '1' ] ; then
+           echo -n 'Type header name to search for: '
            read VAR
            AVAR=$(sed -n "/$VAR/,/END/p" <<< "$PVAR")
-	   echo "$AVAR"
+           echo "$AVAR"
            again
-   elif [[ $search =~ ^([sS])$ ]] ; then
-	   echo -n 'Type username to search for: '
+   elif [ $tmpresult -eq '0' ] ; then
+           echo -n 'Type username to search for: '
            read VVAR
            NVAR=$(sed -n "/$VVAR/p" <<< "$PVAR")
            echo "$NVAR" 
            again
    else
-     echo 'Try again plz.'
-     search_function
+     echo "This shouldn't happen."
+     welcome_function
    fi
 }
 
-#Read in filename of GPG file.
-echo -n "GPG Encrypted Password File Name: "
-read -e pwfile
-PVAR=$(gpg --decrypt $pwfile)
-search_function
+gpg_function
 
