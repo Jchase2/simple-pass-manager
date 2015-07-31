@@ -11,6 +11,7 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #Library General Public License for more details.
 
+#Exit or retry dialog.
 again() {
    echo -n 'Search Again? (y/n): '
    read searchagain
@@ -18,15 +19,15 @@ again() {
        search_function
    else
        rm $txtpath
-       if [ -d "$dneramfs" ]; then
-          echo 'One more sudo to remove the ramfs.'
-          sudo umount dneramfs && rm -R dneramfs
+       if [ -d "$dnetmpfs" ]; then
+          umount dnetmpfs && rm -R dnetmpfs
        fi
       exit
    fi
 }
 
 
+#Searching
 search_function() {
    echo -n 'Press 'h' to search for a header, 's' to output a password line: (s/h): '
    read search
@@ -46,6 +47,7 @@ search_function() {
    fi
 }
 
+#Check ram usage.
 check_ram(){
    cat /proc/meminfo >> meminfodne.txt 
    AVAR=$(sed -n "/MemFree:/p" meminfodne.txt)
@@ -54,6 +56,7 @@ check_ram(){
    echo "$AVAR"
 }
 
+#Check /tmp to see if it's a tmpfs
 check_tmp(){
    line=$(df -T /tmp)
    line=$(sed -n '/tmpfs/p' <<< $line)
@@ -66,6 +69,7 @@ check_tmp(){
    fi 
 }
 
+#Check /dev/shm to see if it's a tmpfs
 check_shm(){
    line=$(df -T /dev/shm)
    line=$(sed -n '/tmpfs/p' <<< $line)
@@ -78,17 +82,29 @@ check_shm(){
    fi 
 }
 
+#Read in filename of GPG file.
 echo -n "GPG Encrypted Password File Name: "
 read -e pwfile
+
+#Check ram usage to make sure there's plenty so we do not spill into swap on drive. 
+memresult=$( check_ram )
+if [ $memresult -le 50000 ] ; then
+   echo "Not enough memory, might overflow into disk via swap."
+   exit
+else
+   echo "Memory test passed."
+fi
+
+#Look for tmpfs, if none create one.
 tmpresult=$( check_tmp )
 if [ $tmpresult -eq 0 ] ; then
    echo "/tmp is not a tmpfs, checking /dev/shm"
    shmresult=$( check_shm )
    if [ $shmresult -eq 0 ] ; then
-      echo 'No tmpfs found on your system. We need to create one using root.'
-      mkdir dneramfs
-      sudo mount -t ramfs -o size=10m ramfs dneramfs
-      txtpath='dneramfs/temp_file.txt'
+      echo "No tmpfs found, creating temporary tmpfs."
+      mkdir dnetmpfs
+      mount -t tmpfs -o size=10m tmpfs dnetmpfs
+      txtpath='dnetmpfs/temp_file.txt'
    else
       txtpath='/dev/shm/temp_file.txt'
    fi
