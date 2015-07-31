@@ -19,9 +19,10 @@ again() {
        search_function
    else
        rm $txtpath
-       if [ -d "$dnetmpfs" ]; then
-          umount dnetmpfs && rm -R dnetmpfs
-       fi
+      if [ -d dnetmpfs ]; then
+         echo "Running sudo again to umount the temporary tmpfs we created." 
+         sudo umount dnetmpfs && rm -R dnetmpfs
+      fi
       exit
    fi
 }
@@ -101,9 +102,10 @@ if [ $tmpresult -eq 0 ] ; then
    echo "/tmp is not a tmpfs, checking /dev/shm"
    shmresult=$( check_shm )
    if [ $shmresult -eq 0 ] ; then
-      echo "No tmpfs found, creating temporary tmpfs."
+      echo "No tmpfs found, creating temporary tmpfs. This requires root."
       mkdir dnetmpfs
-      mount -t tmpfs -o size=10m tmpfs dnetmpfs
+      WHO=$(whoami)
+      sudo mount -t tmpfs -o size=10m tmpfs dnetmpfs && sudo chown -R $WHO dnetmpfs
       txtpath='dnetmpfs/temp_file.txt'
    else
       txtpath='/dev/shm/temp_file.txt'
