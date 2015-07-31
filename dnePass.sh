@@ -46,6 +46,14 @@ search_function() {
    fi
 }
 
+check_ram(){
+   cat /proc/meminfo >> meminfodne.txt 
+   AVAR=$(sed -n "/MemFree:/p" meminfodne.txt)
+   AVAR=$(tr -d -c 0-9 <<< $AVAR)
+   rm meminfodne.txt
+   echo "$AVAR"
+}
+
 check_tmp(){
    line=$(df -T /tmp)
    line=$(sed -n '/tmpfs/p' <<< $line)
