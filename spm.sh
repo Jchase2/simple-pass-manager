@@ -16,6 +16,7 @@
 GLOBV=""
 SGLOBV=""
 ENDVAR="END"
+USEKEY=""
 
 gpg_function(){
   echo $'\n'
@@ -33,21 +34,19 @@ backup_function(){
   else
     echo "Successful Backup."
   fi
-  welcome_function
 }
 
 #welcome function
 welcome_function(){
-echo 'Welcome to simple-password-manager.'
-echo 'Type 's' to search for a string.'
-echo 'Type 'h' to search for a header.'
-echo 'Type 'n' to enter a new section.'
-echo 'Type 'b' to backup(copy) the encrypted file.'
-echo 'Type 'o' to open a different encrypted pw file.'
-echo 'Type 'r' to read the entire file.'
-echo 'Type 'q' to quit.'
-read -r -p "Command: " GLOBV
-input_function
+   echo 'Welcome to simple-password-manager.'
+   echo 'Type 's' to search for a string.'
+   echo 'Type 'h' to search for a header.'
+   echo 'Type 'n' to enter a new section.'
+   echo 'Type 'o' to open a different encrypted pw file.'
+   echo 'Type 'r' to read the entire file.'
+   echo 'Type 'q' to quit.'
+   read -r -p "Command: " GLOBV
+   input_function
 }
 
 again(){
@@ -65,28 +64,26 @@ again(){
 
 
 input_function(){
-USRINPUT="$GLOBV"
-if [[ $USRINPUT  =~ ^([sS])$ ]] ; then
-   SGLOBV=0
-   search_function
-elif [[ $USRINPUT =~ ^([hH])$ ]] ; then
-   SGLOBV=1
-   search_function
-elif [[ $USRINPUT =~ ^([bB])$ ]] ; then
-   backup_function
-elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
-   gpg_function
-elif [[ $USRINPUT =~ ^([nN])$ ]] ; then
-   add_section
-elif [[ $USRINPUT =~ ^([rR])$ ]] ; then
-   read_file
-elif [[ $USRINPUT =~ ^([qQ])$ ]] ; then
-   unset PVAR
-   exit
-else
-   echo 'Bad input, try again.'
-   welcome_function
-fi
+   USRINPUT="$GLOBV"
+   if [[ $USRINPUT  =~ ^([sS])$ ]] ; then
+      SGLOBV=0
+      search_function
+   elif [[ $USRINPUT =~ ^([hH])$ ]] ; then
+      SGLOBV=1
+      search_function
+   elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
+      gpg_function
+   elif [[ $USRINPUT =~ ^([nN])$ ]] ; then
+      add_section
+   elif [[ $USRINPUT =~ ^([rR])$ ]] ; then
+      read_file
+   elif [[ $USRINPUT =~ ^([qQ])$ ]] ; then
+      unset PVAR
+      exit
+   else
+      echo 'Bad input, try again.'
+      welcome_function
+   fi
 }
 
 search_function() {
@@ -118,29 +115,33 @@ search_function() {
 #}
 
 read_file(){
-
   echo -e "$PVAR" | less 
   welcome_function
+}
 
+get_key(){
+   echo 'List of your secret Keys: '
+   gpg --list-secret-keys | less
+   echo $'\n'
+   echo -n 'Type in user ID of key to use: '
+   read USEKEY
 }
 
 add_section(){
-
    echo -n "Enter Section Name: "
    read USRSEC
    PVAR+=$'\n'
    PVAR+="==== "$USRSEC" ===="
    PVAR+=$'\n'
    PVAR+="==== "$ENDVAR" ===="
-   gpg -e "$PVAR"
+   backup_function
+   get_key
+   echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
    welcome_function
 }
 
 #remove_section(){
-
 #}
-
-
 
 gpg_function
 
