@@ -3,14 +3,40 @@ Simple shell gpg password manager.
 
 ## Features
 
-* Never stores passwords unencrypted on drive.
-* Shell completion.
-* Display sections or individual username:password lines. 
+* Never stores unecrypted data on drive.
+* Handles gpg file creation. 
+* Allows uer to add new password sections. 
+* Allows user to search for sections or individual lines. 
+* Allows user to read entire contents of the "file". 
 
-##How to: 
+##Requirements
 
-Create a password file with sections identified by headers. 
-For example: 
+This script relies on GPG and was written and tested using BASH.
+In the future I'll likely try to make it POSIX compatible so it
+will work with more shells. It also assumes you have an already
+existing key, although we may handle key creation in the future. 
+
+
+## How To:
+
+When you launch it, it presents you with a simple self-explanatory menu.
+
+  > echo 'Welcome to simple-password-manager.'
+  > echo 'Type 'o' to open an existing encrypted pw file.'
+  > echo 'Type 'r' to read the entire file.'
+  > echo 'Type 's' to search for a string.'
+  > echo 'Type 'h' to search for a section.'
+  > echo 'Type 'n' to enter a new section.'
+  > echo 'Type 'f' to create and open a new encrypted pw file.'
+  > echo 'Type 'q' to quit.'
+
+When you use 'f' it just creates a new gpg file and you can move on to 
+adding sections or passwords with the other options. 
+ 
+
+## How it works.
+
+File sections and passwords are stored like this: 
 
 === Email ==
 
@@ -18,24 +44,25 @@ email:pass
 
 === END ===
 
-When you run the script, it will ask you to specify the gpg file
-of the script, then invoke gpg to decrypt it. After that, it will prompt 
-you to check weather you want to search for a specific line to print, or
-a section. If you select 's' for a single line, you type the first name
-in the line, for example "email", and it'll print the whole line. If you
-select 'h' for header, then it will print the entire section. 
+The "END" section marks the end of a given section, and the name "EMAIL" marks
+the beginning. When you search for a section, it will output from "EMAIL" to 
+"END". You can easily change the END delimiter by editing the script. The first
+delimiter, "EMAIL" in this example, is read in by the user when a new section is
+created. 
 
-The end of a section should be delimited with END. You can edit the script to
-change the end delimiter. 
+You can also search for the string "email" and it'll output the whole line: 
+>email:pass
+
+Everything is stored in local non-exported shell variables, and thus never touches
+the file-system, until it is streamed into a gpg encrypted file. 
+
 
 ## Planned Changes
 
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. Planned features: 
 
-* Create encrypted file w/ standardized format. (maybe) 
 * Add passwords to sections
 * Remove passwords from sections
-* Add sections
 * Remove sections
-
+* Make it POSIX compatible. 
