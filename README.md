@@ -22,14 +22,14 @@ existing key, although we may handle key creation in the future.
 When you launch it, it presents you with a simple self-explanatory menu.
 
 ```
-echo 'Welcome to simple-password-manager.'
-echo 'Type 'o' to open an existing encrypted pw file.'
-echo 'Type 'r' to read the entire file.'
-echo 'Type 's' to search for a string.'
-echo 'Type 'h' to search for a section.'
-echo 'Type 'n' to enter a new section.'
-echo 'Type 'f' to create and open a new encrypted pw file.'
-echo 'Type 'q' to quit.'
+Welcome to simple-password-manager.
+Type 'o' to open an existing encrypted pw file.
+Type 'r' to read the entire file.
+Type 's' to search for a string.
+Type 'h' to search for a section.
+Type 'n' to enter a new section.
+Type 'f' to create and open a new encrypted pw file.
+Type 'q' to quit.
 ```
 When you use 'f' it just creates a new gpg file and you can move on to 
 adding sections or passwords with the other options. 
