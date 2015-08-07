@@ -28,7 +28,7 @@ gpg_function(){
 }
 
 backup_function(){
-  cp $pwfile pwfile.bak
+  cp $pwfile ${pwfile}.bak
   if [ $? -gt 0 ]; then
     echo "Backup Failed."
   else
@@ -117,7 +117,7 @@ new_file(){
    echo -n "Enter file name: "
    read pwfile
    get_key
-   echo " ---simple-pass-manager file--- " | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
+   echo "---simple-pass-manager file---" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
    PVAR=$(gpg --decrypt $pwfile)
    echo $'\n'
    welcome_function
