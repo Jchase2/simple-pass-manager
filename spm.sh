@@ -39,11 +39,12 @@ backup_function(){
 #welcome function
 welcome_function(){
    echo 'Welcome to simple-password-manager.'
-   echo 'Type 's' to search for a string.'
-   echo 'Type 'h' to search for a header.'
-   echo 'Type 'n' to enter a new section.'
-   echo 'Type 'o' to open a different encrypted pw file.'
+   echo 'Type 'o' to open an existing encrypted pw file.'
    echo 'Type 'r' to read the entire file.'
+   echo 'Type 's' to search for a string.'
+   echo 'Type 'h' to search for a section.'
+   echo 'Type 'n' to enter a new section.'
+   echo 'Type 'f' to create and open a new encrypted pw file.'
    echo 'Type 'q' to quit.'
    read -r -p "Command: " GLOBV
    input_function
@@ -73,6 +74,8 @@ input_function(){
       search_function
    elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
       gpg_function
+   elif [[ $USRINPUT =~ ^([fF])$ ]] ; then
+      new_file
    elif [[ $USRINPUT =~ ^([nN])$ ]] ; then
       add_section
    elif [[ $USRINPUT =~ ^([rR])$ ]] ; then
@@ -110,9 +113,15 @@ search_function() {
    fi
 }
 
-#new_file(){
-
-#}
+new_file(){
+   echo -n "Enter file name: "
+   read pwfile
+   get_key
+   echo " ---simple-pass-manager file--- " | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
+   PVAR=$(gpg --decrypt $pwfile)
+   echo $'\n'
+   welcome_function
+}
 
 read_file(){
   echo -e "$PVAR" | less 
@@ -143,5 +152,5 @@ add_section(){
 #remove_section(){
 #}
 
-gpg_function
+welcome_function
 
