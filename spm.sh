@@ -121,9 +121,9 @@ read_file(){
 
 get_key(){
    echo 'List of your secret Keys: '
-   gpg --list-secret-keys | less
+   gpg --list-secret-keys
    echo $'\n'
-   echo -n 'Type in user ID of key to use: '
+   echo -n 'Type in user ID (name) of key to use from list above: '
    read USEKEY
 }
 
