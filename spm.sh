@@ -19,6 +19,7 @@ ENDVAR="END"
 USEKEY=""
 
 gpg_function(){
+  check_mem
   echo $'\n'
   echo -n "GPG Encrypted Password File Name: "
   read -e pwfile
@@ -111,6 +112,25 @@ search_function() {
      echo "This shouldn't happen."
      welcome_function
    fi
+}
+
+check_mem(){
+   cat /proc/meminfo >> meminfodne.txt
+   AVAR=$(sed -n "/MemFree:/p" meminfodne.txt)
+   AVAR=$(tr -d -c 0-9 <<< $AVAR)
+   rm meminfodne.txt
+   if [ "$AVAR" -lt 100000 ] ; then
+     echo "You have less than 100mb of ram left. Having a low amount of free ram may"
+     echo -n "cause data to overflow into swap on the drive. Would you like to continue? y/n: "
+       read YN
+     if [[ $YN =~ [yY](es)* ]]  ; then
+        echo "Continuing anyway." 
+     else
+       exit
+     fi
+   else
+      echo "Memory ok."
+   fi 
 }
 
 new_file(){
