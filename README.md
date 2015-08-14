@@ -5,7 +5,8 @@ Simple shell gpg password manager.
 
 * Never stores unecrypted data on drive.
 * Handles gpg file creation. 
-* Allows uer to add new password sections. 
+* Allows user to add new sections. 
+* Allows user to add data between sections. 
 * Allows user to search for sections or individual lines. 
 * Allows user to read entire contents of the "file". 
 
@@ -27,6 +28,7 @@ Type 'o' to open an existing encrypted pw file.
 Type 'r' to read the entire file.
 Type 's' to search for a string.
 Type 'h' to search for a section.
+Type 'i' to insert new information (e.g a username:password combo.)
 Type 'n' to enter a new section.
 Type 'f' to create and open a new encrypted pw file.
 Type 'q' to quit.
@@ -39,11 +41,13 @@ adding sections or passwords with the other options.
 
 File sections and passwords are stored like this: 
 
+'''
 === Email ==
 
 email:pass
 
 === END ===
+'''
 
 The "END" section marks the end of a given section, and the name "EMAIL" marks
 the beginning. When you search for a section, it will output from "EMAIL" to 
@@ -63,7 +67,8 @@ the file-system, until it is streamed into a gpg encrypted file.
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. Planned features: 
 
-* Add passwords to sections
+* Include checking for correct sections.
+* Include editing the whole file.
 * Remove passwords from sections
 * Remove sections
 * Make it POSIX compatible. 
