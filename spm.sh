@@ -44,6 +44,7 @@ welcome_function(){
    echo 'Type 'r' to read the entire file.'
    echo 'Type 's' to search for a string.'
    echo 'Type 'h' to search for a section.'
+   echo 'Type 'i' to insert new information (e.g a username:password combo.)'
    echo 'Type 'n' to enter a new section.'
    echo 'Type 'f' to create and open a new encrypted pw file.'
    echo 'Type 'q' to quit.'
@@ -73,6 +74,8 @@ input_function(){
    elif [[ $USRINPUT =~ ^([hH])$ ]] ; then
       SGLOBV=1
       search_function
+   elif [[ $USRINPUT =~ ^([iI])$ ]] ; then
+      new_pw
    elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
       gpg_function
    elif [[ $USRINPUT =~ ^([fF])$ ]] ; then
@@ -132,6 +135,24 @@ check_mem(){
       echo "Memory ok."
    fi 
 }
+
+new_pw(){
+   echo -n 'Enter section to insert information into: '
+      read VAR
+   echo -n 'Enter string to insert: '
+      read NEWPW
+   AVAR=$(while IFS= read -r line; do
+           echo $line
+           echo $line | grep -q "$VAR"
+           [ $? -eq 0 ] && echo -e "$NEWPW"
+         done <<< "$PVAR")
+   PVAR="$AVAR"
+   backup_function
+   get_key
+   echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
+   welcome_function
+}
+
 
 new_file(){
    echo -n "Enter file name: "
