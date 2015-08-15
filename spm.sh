@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #Copyright (C) 2015 JChase2
 #This code is free software; you can redistribute it and/or
