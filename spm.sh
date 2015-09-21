@@ -160,15 +160,16 @@ check_mem(){
 new_pw(){
    echo -n 'Enter section to insert information into: '
       read VAR
-      string_exists "$VAR"
-      if [ $CHKVAR -eq 1 ]; then
-         echo $'\n'
-         echo "Unable to find section."
-         echo $'\n'
-         welcome_function
-      fi
+   string_exists "$VAR"
+   if [ $CHKVAR -eq 1 ]; then
+      echo $'\n'
+      echo "Unable to find section."
+      echo $'\n'
+      welcome_function
+   fi
    echo -n 'Enter string to insert: '
       read NEWPW
+
    # This reads in the whole file, IFS= disables delimiting by spaces.
    # This preserves leading and trailing whitespaces for formatting purposes.
    # -r allows us to get new lines intead of a single really long line.
@@ -178,6 +179,7 @@ new_pw(){
            echo $line | grep -q "$VAR"
            [ $? -eq 0 ] && echo -e "$NEWPW"
          done <<< "$PVAR")
+
    PVAR="$AVAR"
    backup_function
    get_key
@@ -211,7 +213,14 @@ get_key(){
 
 add_section(){
    echo -n "Enter Section Name: "
-   read USRSEC
+      read USRSEC
+   string_exists "$USRSEC"
+   if [ $CHKVAR -eq 0 ]; then
+      echo $'\n'
+      echo "Section Already Exists."
+      echo $'\n'
+      welcome_function
+   fi
    PVAR+=$'\n'
    PVAR+="==== "$USRSEC" ===="
    PVAR+=$'\n'
