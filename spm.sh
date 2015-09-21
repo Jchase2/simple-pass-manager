@@ -11,12 +11,15 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #Library General Public License for more details.
 
-#Read in filename of GPG file.
+# Variables invokation and description.
 
 GLOBV="" #Stores initial user input.
 SGLOBV="" #Choice of header or string for search function.
 ENDVAR="END" #End of block delimiter.
-USEKEY="" #Beginning of block delmiter. E.g header name.
+USEKEY="" # Name of private key to encrypt with.
+CHKSTR="" #Check if string exists for use in other functions.
+
+#Read in filename of GPG file.
 
 gpg_function(){
   check_mem
@@ -29,7 +32,8 @@ gpg_function(){
 }
 
 # Creates a backup directory and creates
-# backups upon pw file change.
+# a backup upon pw file change.
+# TODO: Rotate backups.
 
 backup_function(){
   if [ ! -d pwbackup ] ; then
@@ -99,24 +103,34 @@ input_function(){
    fi
 }
 
-#TODO: Return not found if it doesn't exist.
+# Check if string exists in pwfile.
+string_exists(){
+   pattern=$1
+   if [[ "$PVAR" == *${pattern}* ]]; then
+      CHKVAR=0
+   else
+      CHKVAR=1
+   fi
+}
+
 search_function() {
    tmpresult="$SGLOBV"
+
    if [ $tmpresult -eq '1' ] ; then
 	   echo -n 'Type header name to search for: '
            read VAR
+           string_exists "$VAR"
            echo $'\n'
            AVAR=$(sed -n "/$VAR/,/$ENDVAR/p" <<< "$PVAR")
            echo "$AVAR"
-           echo $'\n'
            again
    elif [ $tmpresult -eq '0' ] ; then
            echo -n 'Type username to search for: '
            read VVAR
+           string_exists "$VVAR"
            echo $'\n'
            NVAR=$(sed -n "/$VVAR/p" <<< "$PVAR")
            echo "$NVAR"
-           echo $'\n'
            again
    else
      echo "This shouldn't happen."
@@ -146,8 +160,19 @@ check_mem(){
 new_pw(){
    echo -n 'Enter section to insert information into: '
       read VAR
+      string_exists "$VAR"
+      if [ $CHKVAR -eq 1 ]; then
+         echo $'\n'
+         echo "Unable to find section."
+         echo $'\n'
+         welcome_function
+      fi
    echo -n 'Enter string to insert: '
       read NEWPW
+   # This reads in the whole file, IFS= disables delimiting by spaces.
+   # This preserves leading and trailing whitespaces for formatting purposes.
+   # -r allows us to get new lines intead of a single really long line.
+   # Everything is pushed into AVAR, after grep does its thing.
    AVAR=$(while IFS= read -r line; do
            echo $line
            echo $line | grep -q "$VAR"
