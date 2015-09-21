@@ -41,13 +41,13 @@ adding sections or passwords with the other options.
 
 File sections and passwords are stored like this: 
 
-'''
+```
 === Email ==
 
 email:pass
 
 === END ===
-'''
+```
 
 The "END" section marks the end of a given section, and the name "EMAIL" marks
 the beginning. When you search for a section, it will output from "EMAIL" to 
@@ -59,7 +59,9 @@ You can also search for the string "email" and it'll output the whole line:
 >email:pass
 
 Everything is stored in local non-exported shell variables, and thus never touches
-the file-system, until it is streamed into a gpg encrypted file. 
+the file-system, until it is streamed into a gpg encrypted file. At least, based on
+everything I've read, and assuming standard unix/linux tools like sed don't do anything
+stupid like write to disk...
 
 
 ## Planned Changes
@@ -67,7 +69,6 @@ the file-system, until it is streamed into a gpg encrypted file.
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. Planned features: 
 
-* Include checking for correct sections.
 * Include editing the whole file.
 * Remove passwords from sections
 * Remove sections
