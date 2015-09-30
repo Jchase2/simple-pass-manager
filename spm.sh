@@ -33,13 +33,11 @@ gpg_function(){
 
 # Creates a backup directory and creates
 # a backup upon pw file change.
-# TODO: Rotate backups.
 
 backup_function(){
   if [ ! -d pwbackup ] ; then
     mkdir pwbackup
   fi
-  #cp $pwfile pwbackup/${pwfile}.bak
   cp -a -- "$pwfile" "pwbackup/$pwfile-$(date +"%Y%m%d-%H%M%S")"
   if [ $? -gt 0 ]; then # If cp exits with non-zero return.
     echo "Backup Failed."
@@ -218,9 +216,14 @@ add_section(){
    string_exists "$USRSEC"
    if [ $CHKVAR -eq 0 ]; then
       echo $'\n'
-      echo "Section Already Exists."
-      echo $'\n'
-      welcome_function
+      echo "Section or PW with this name already exists."
+      echo -n "Continue anyway? y/n: "
+      read ANLVAR
+      if [[ $ANLVAR =~ [yY](es)* ]]  ; then
+         echo "Continuing Anyway"
+      else
+         welcome_function
+      fi
    fi
    backup_function
    PVAR+=$'\n'
