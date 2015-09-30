@@ -17,7 +17,7 @@ GLOBV="" #Stores initial user input.
 SGLOBV="" #Choice of header or string for search function.
 ENDVAR="END" #End of block delimiter.
 USEKEY="" # Name of private key to encrypt with.
-CHKSTR="" #Check if string exists for use in other functions.
+CHKVAR="" #Check if string exists for use in other functions.
 
 #Read in filename of GPG file.
 
@@ -105,11 +105,12 @@ input_function(){
    fi
 }
 
+
 # Check if string exists in pwfile.
 string_exists(){
    pattern=$1
    if [[ "$PVAR" == *${pattern}* ]]; then
-      CHKVAR=0
+      CHKVAR=0 #Exists...
    else
       CHKVAR=1
    fi
@@ -121,22 +122,32 @@ search_function() {
    if [ $tmpresult -eq '1' ] ; then
 	   echo -n 'Type header name to search for: '
            read VAR
-           string_exists "$VAR"
+           string_exists "==== $VAR ===="
            echo $'\n'
-           AVAR=$(sed -n "/$VAR/,/$ENDVAR/p" <<< "$PVAR")
-           echo "$AVAR"
-           again
+           if [ $CHKVAR -eq 0 ]; then
+              AVAR=$(sed -n "/==== $VAR ====/,/$ENDVAR/p" <<< "$PVAR")
+              echo "$AVAR"
+              again
+           else
+	      echo 'Header does not exist.'
+              again
+           fi
    elif [ $tmpresult -eq '0' ] ; then
            echo -n 'Type username to search for: '
            read VVAR
            string_exists "$VVAR"
-           echo $'\n'
-           NVAR=$(sed -n "/$VVAR/p" <<< "$PVAR")
-           echo "$NVAR"
-           again
+           if [ $CHKVAR -eq 0 ]; then
+              echo $'\n'
+              NVAR=$(sed -n "/$VVAR/p" <<< "$PVAR")
+              echo "$NVAR"
+              again
+           else
+              echo 'String does not exist.'
+              again
+           fi
    else
-     echo "This shouldn't happen."
-     welcome_function
+      echo "This shouldn't happen."
+      welcome_function
    fi
 }
 
@@ -163,16 +174,29 @@ new_pw(){
    echo -n 'Enter section to insert information into: '
       read VAR
    string_exists "$VAR"
-   if [ $CHKVAR -eq 1 ]; then
+   if [ $CHKVAR -eq 0 ]; then
+      echo "Section exists, continuing."
+   else
       echo $'\n'
-      echo "Unable to find section."
+      echo "Section does not exist."
       echo $'\n'
       welcome_function
    fi
    backup_function
    echo -n 'Enter string to insert: '
       read NEWPW
-
+   string_exists "$NEWPW"
+   if [ $CHKVAR -eq 0 ]; then
+      echo $'\n'
+      echo "Section or PW with this name already exists."
+      echo -n "Continue anyway? y/n: "
+      read ANLVAR
+      if [[ $ANLVAR =~ [yY](es)* ]]  ; then
+         echo "Continuing Anyway"
+      else
+         welcome_function
+      fi
+   fi
    # This reads in the whole file, IFS= disables delimiting by spaces.
    # This preserves leading and trailing whitespaces for formatting purposes.
    # -r allows us to get new lines intead of a single really long line.
@@ -216,10 +240,12 @@ get_key(){
 add_section(){
    echo -n "Enter Section Name: "
       read USRSEC
-   string_exists "$USRSEC"
+   string_exists "==== $USRSEC ===="
    if [ $CHKVAR -eq 0 ]; then
       echo $'\n'
-      echo "Section or PW with this name already exists."
+      echo "Section with this name already exists."
+      echo "Note if you delete a section that exists twice,"
+      echo "it will delete them both and their contents."
       echo -n "Continue anyway? y/n: "
       read ANLVAR
       if [[ $ANLVAR =~ [yY](es)* ]]  ; then
@@ -241,13 +267,22 @@ add_section(){
 remove_section(){
   echo -n 'Type header of section to remove: '
   read VAR
-  string_exists "$VAR"
-  echo $'\n'
-  backup_function
-  PVAR=$(sed "/==== $VAR ====/,/$ENDVAR/d" <<< "$PVAR")
-  get_key
-  echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
-  welcome_function
+  string_exists "==== $VAR ===="
+  if [ $CHKVAR -eq 0 ]; then
+     # Note, in future check if there's more than one header with the same name...
+     # It remove them both if there is...
+     echo $'\n'
+     backup_function
+     PVAR=$(sed "/==== $VAR ====/,/$ENDVAR/d" <<< "$PVAR")
+     get_key
+     echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
+     welcome_function
+  else
+     echo $'\n'
+     echo "Section not found."
+     echo $'\n'
+     welcome_function
+  fi
 }
 
 welcome_function
