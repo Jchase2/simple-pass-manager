@@ -55,6 +55,7 @@ welcome_function(){
    echo 'Type 'h' to search for a section.'
    echo 'Type 'i' to insert new information (e.g a username:password combo.)'
    echo 'Type 'n' to enter a new section.'
+   echo 'Type 'd' to delete a section and its contents.'
    echo 'Type 'f' to create and open a new encrypted pw file.'
    echo 'Type 'q' to quit.'
    read -r -p "Command: " GLOBV
@@ -93,6 +94,8 @@ input_function(){
       add_section
    elif [[ $USRINPUT =~ ^([rR])$ ]] ; then
       read_file
+   elif [[ $USRINPUT =~ ^([dD])$ ]] ; then
+      remove_section
    elif [[ $USRINPUT =~ ^([qQ])$ ]] ; then
       unset PVAR
       exit
@@ -235,8 +238,17 @@ add_section(){
    welcome_function
 }
 
-#remove_section(){
-#}
+remove_section(){
+  echo -n 'Type header of section to remove: '
+  read VAR
+  string_exists "$VAR"
+  echo $'\n'
+  backup_function
+  PVAR=$(sed "/==== $VAR ====/,/$ENDVAR/d" <<< "$PVAR")
+  get_key
+  echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
+  welcome_function
+}
 
 welcome_function
 
