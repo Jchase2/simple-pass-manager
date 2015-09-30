@@ -39,7 +39,8 @@ backup_function(){
   if [ ! -d pwbackup ] ; then
     mkdir pwbackup
   fi
-  cp $pwfile pwbackup/${pwfile}.bak
+  #cp $pwfile pwbackup/${pwfile}.bak
+  cp -a -- "$pwfile" "pwbackup/$pwfile-$(date +"%Y%m%d-%H%M%S")"
   if [ $? -gt 0 ]; then # If cp exits with non-zero return.
     echo "Backup Failed."
   else
@@ -167,6 +168,7 @@ new_pw(){
       echo $'\n'
       welcome_function
    fi
+   backup_function
    echo -n 'Enter string to insert: '
       read NEWPW
 
@@ -181,7 +183,6 @@ new_pw(){
          done <<< "$PVAR")
 
    PVAR="$AVAR"
-   backup_function
    get_key
    echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
    welcome_function
@@ -221,11 +222,11 @@ add_section(){
       echo $'\n'
       welcome_function
    fi
+   backup_function
    PVAR+=$'\n'
    PVAR+="==== "$USRSEC" ===="
    PVAR+=$'\n'
    PVAR+="==== "$ENDVAR" ===="
-   backup_function
    get_key
    echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
    welcome_function
