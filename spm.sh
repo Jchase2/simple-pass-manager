@@ -56,6 +56,7 @@ welcome_function(){
    echo 'Type 'i' to insert new information (e.g a username:password combo.)'
    echo 'Type 'n' to enter a new section.'
    echo 'Type 'd' to delete a section and its contents.'
+   echo 'Type 'k' to delete a string from a section.'
    echo 'Type 'f' to create and open a new encrypted pw file.'
    echo 'Type 'q' to quit.'
    read -r -p "Command: " GLOBV
@@ -86,6 +87,8 @@ input_function(){
       search_function
    elif [[ $USRINPUT =~ ^([iI])$ ]] ; then
       new_pw
+   elif [[ $USRINPUT =~ ^([kK])$ ]] ; then
+      remove_string
    elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
       gpg_function
    elif [[ $USRINPUT =~ ^([fF])$ ]] ; then
@@ -173,10 +176,8 @@ check_mem(){
 new_pw(){
    echo -n 'Enter section to insert information into: '
       read VAR
-   string_exists "$VAR"
-   if [ $CHKVAR -eq 0 ]; then
-      echo "Section exists, continuing."
-   else
+   string_exists "==== $VAR ===="
+   if [ $CHKVAR -eq 1 ]; then
       echo $'\n'
       echo "Section does not exist."
       echo $'\n'
@@ -188,10 +189,19 @@ new_pw(){
    string_exists "$NEWPW"
    if [ $CHKVAR -eq 0 ]; then
       echo $'\n'
-      echo "Section or PW with this name already exists."
+      echo "String with this name already exists somewhere in the file..."
       echo -n "Continue anyway? y/n: "
       read ANLVAR
       if [[ $ANLVAR =~ [yY](es)* ]]  ; then
+        string_exists "==== $NEWPW ===="
+        if [ $CHKVAR -eq 0 ]; then
+            echo $'\n'
+            echo 'ERROR: PW is the same as a header name. This can'
+            echo 'create conflicts where removing a pw removes' 
+            echo 'a header name... Operation not complete.'
+            echo $'\n'
+            welcome_function
+        fi
          echo "Continuing Anyway"
       else
          welcome_function
@@ -203,7 +213,7 @@ new_pw(){
    # Everything is pushed into AVAR, after grep does its thing.
    AVAR=$(while IFS= read -r line; do
            echo $line
-           echo $line | grep -q "$VAR"
+           echo $line | grep -qx "==== $VAR ===="
            [ $? -eq 0 ] && echo -e "$NEWPW"
          done <<< "$PVAR")
 
@@ -240,20 +250,17 @@ get_key(){
 add_section(){
    echo -n "Enter Section Name: "
       read USRSEC
+
    string_exists "==== $USRSEC ===="
+
+   # Not allowing creation of duplicate headers because deleting
+   # one will automatically delete the other...
    if [ $CHKVAR -eq 0 ]; then
       echo $'\n'
-      echo "Section with this name already exists."
-      echo "Note if you delete a section that exists twice,"
-      echo "it will delete them both and their contents."
-      echo -n "Continue anyway? y/n: "
-      read ANLVAR
-      if [[ $ANLVAR =~ [yY](es)* ]]  ; then
-         echo "Continuing Anyway"
-      else
-         welcome_function
-      fi
+      echo "A section with this name already exists."
+      welcome_function
    fi
+
    backup_function
    PVAR+=$'\n'
    PVAR+="==== "$USRSEC" ===="
@@ -269,8 +276,6 @@ remove_section(){
   read VAR
   string_exists "==== $VAR ===="
   if [ $CHKVAR -eq 0 ]; then
-     # Note, in future check if there's more than one header with the same name...
-     # It remove them both if there is...
      echo $'\n'
      backup_function
      PVAR=$(sed "/==== $VAR ====/,/$ENDVAR/d" <<< "$PVAR")
@@ -280,6 +285,25 @@ remove_section(){
   else
      echo $'\n'
      echo "Section not found."
+     echo $'\n'
+     welcome_function
+  fi
+}
+
+remove_string(){
+ echo -n 'Type name of string to remove: '
+  read VAR
+  string_exists "$VAR"
+  if [ $CHKVAR -eq 0 ]; then
+     echo $'\n'
+     backup_function
+     PVAR=$(sed -e  "s/\<$VAR\>//g" <<< "$PVAR")
+     get_key
+     echo "$PVAR" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
+     welcome_function
+  else
+     echo $'\n'
+     echo "String not found."
      echo $'\n'
      welcome_function
   fi
