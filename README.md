@@ -30,6 +30,21 @@ this:
 
 >username:password
 
+For additional information, like reset questions and answers, you have two options. First,
+you could use really long strings like this: 
+
+>username:password:question:answer:question2:answer2:pincode:4857489393:whatever:whatever
+
+Which works fine. A less ugly way to do it, however, is to just insert multiple lines, each
+beginning with the same thing, like this:  
+
+> email:username:pass
+> email:securityquestion:answer
+> email:pincode:pw
+
+When you search for a string, if you just type "email", all instances of email will be printed.
+This is generally easier to read, but it really comes down to personal preference. 
+
 Here's the menu:
 
 ```
@@ -79,4 +94,4 @@ are welcomed. Planned features:
 
 * Make it POSIX compatible. 
 * GPG key creation (maybe). 
-
+* Insert multiple lines of info, e.g a "block" of info. 
