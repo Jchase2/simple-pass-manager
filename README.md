@@ -1,6 +1,6 @@
 # simple-pass-manager
 Simple shell gpg password manager. 
-[A DnE MbN project.](http://mbn.darknedgy.net/simple-pass-manager)
+[A DnE MbN project.](http://mbn.darknedgy.net/DnE_Labs/simple-pass-manager)
 
 ## Features
 
