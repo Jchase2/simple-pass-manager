@@ -49,16 +49,7 @@ backup_function(){
 #welcome function
 welcome_function(){
    echo 'Welcome to simple-password-manager.'
-   echo 'Type 'o' to open an existing encrypted pw file.'
-   echo 'Type 'r' to read the entire file.'
-   echo 'Type 's' to search for a string.'
-   echo 'Type 'h' to search for a section.'
-   echo 'Type 'i' to insert new information (e.g a username:password combo.)'
-   echo 'Type 'n' to enter a new section.'
-   echo 'Type 'd' to delete a section and its contents.'
-   echo 'Type 'k' to delete a string from a section.'
-   echo 'Type 'f' to create and open a new encrypted pw file.'
-   echo 'Type 'q' to quit.'
+   echo 'Type '?' or 'help' to print options.'
    read -r -p "Command: " GLOBV
    input_function
 }
@@ -99,6 +90,8 @@ input_function(){
       read_file
    elif [[ $USRINPUT =~ ^([dD])$ ]] ; then
       remove_section
+   elif [[ $USRINPUT =~ ^([?])$ ]] || [[ $USRINPUT == "help" ]]  ; then
+      print_options
    elif [[ $USRINPUT =~ ^([qQ])$ ]] ; then
       unset PVAR
       exit
@@ -106,6 +99,22 @@ input_function(){
       echo 'Bad input, try again.'
       welcome_function
    fi
+}
+
+
+
+print_options(){
+   echo 'Type 'o' to open an existing encrypted pw file.'
+   echo 'Type 'r' to read the entire file.'
+   echo 'Type 's' to search for a string.'
+   echo 'Type 'h' to search for a section.'
+   echo 'Type 'i' to insert new information (e.g a username:password combo.)'
+   echo 'Type 'n' to enter a new section.'
+   echo 'Type 'd' to delete a section and its contents.'
+   echo 'Type 'k' to delete a string from a section.'
+   echo 'Type 'f' to create and open a new encrypted pw file.'
+   echo 'Type 'q' to quit.'
+   welcome_function
 }
 
 
