@@ -98,3 +98,4 @@ are welcomed. Planned features:
 * GPG key creation (maybe). 
 * Insert multiple lines of info, e.g a "block" of info. 
 * List all sections / additional searching capabilities. 
+* Improve the interface. 
