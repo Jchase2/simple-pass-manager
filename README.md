@@ -98,4 +98,6 @@ are welcomed. Planned features:
 * GPG key creation (maybe). 
 * Insert multiple lines of info, e.g a "block" of info. 
 * List all sections / additional searching capabilities. 
-* Improve the interface. 
+* Make user input section when removing a line, only remove from that section. 
+* Only prompt to overwrite encrypted file when specified, exiting, or opening a new file. 
+* Alert user when no encrypted file is "loaded" into the program. 
