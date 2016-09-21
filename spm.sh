@@ -104,6 +104,7 @@ input_function(){
 
 
 print_options(){
+   echo $'\n'
    echo 'Type 'o' to open an existing encrypted pw file.'
    echo 'Type 'r' to read the entire file.'
    echo 'Type 's' to search for a string.'
@@ -114,6 +115,7 @@ print_options(){
    echo 'Type 'k' to delete a string from a section.'
    echo 'Type 'f' to create and open a new encrypted pw file.'
    echo 'Type 'q' to quit.'
+   echo $'\n'
    welcome_function
 }
 
@@ -128,8 +130,20 @@ string_exists(){
    fi
 }
 
+#Check if gpg file is opened, go to welcome if no.
+file_opened(){
+
+   if [ -z "$PVAR" ]; then
+           echo $'\n'
+           echo 'No password file has been opened, type "o"'
+           echo $'\n'
+           welcome_function
+   fi
+}
+
 search_function() {
    tmpresult="$SGLOBV"
+   file_opened
 
    if [ $tmpresult -eq '1' ] ; then
 	   echo -n 'Type header name to search for: '
@@ -183,6 +197,8 @@ check_mem(){
 }
 
 new_pw(){
+
+   file_opened
    echo -n 'Enter section to insert information into: '
       read VAR
    string_exists "==== $VAR ===="
@@ -244,6 +260,7 @@ new_file(){
 }
 
 read_file(){
+  file_opened
   echo -e "$PVAR" | less 
   welcome_function
 }
@@ -257,6 +274,7 @@ get_key(){
 }
 
 add_section(){
+   file_opened
    echo -n "Enter Section Name: "
       read USRSEC
 
@@ -281,6 +299,7 @@ add_section(){
 }
 
 remove_section(){
+  file_opened
   echo -n 'Type header of section to remove: '
   read VAR
   string_exists "==== $VAR ===="
@@ -300,6 +319,7 @@ remove_section(){
 }
 
 remove_string(){
+ file_opened
  echo -n 'Type name of string to remove: '
   read VAR
   string_exists "$VAR"

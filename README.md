@@ -21,12 +21,13 @@ existing key, although we may handle key creation in the future.
 
 ## How To:
 
-When you launch it, it presents you with a simple self-explanatory menu.
+When you launch it, you get a prompt. Type "help" or "?" to get a list of commands.
 Just type the letter of whatever function you want to use. First you either
 have to open an existing encrypted pw file by typing 'o', or create a new 
-encrypted pw file by typing 'f'. Then you should add a section or sections to
-put pw strings between... We recommend formatting your username and passwords like
-this: 
+encrypted pw file by typing 'f'. You'll need an existing GPG key set up for this. 
+
+Then you should add a section or sections to put pw strings between... I recommend 
+formatting your username and passwords like this: 
 
 >username:password
 
@@ -94,10 +95,10 @@ swap while there's enough ram. (The script makes sure there's at least 100MB of 
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. Planned features: 
 
-* Make it POSIX compatible. 
+* Make it (more) POSIX compatible. 
 * GPG key creation (maybe). 
-* Insert multiple lines of info, e.g a "block" of info. 
-* List all sections / additional searching capabilities. 
+* Insert multiple lines of info at once, e.g a "block" of info. 
+* List all sections. 
 * Make user input section when removing a line, only remove from that section. 
 * Only prompt to overwrite encrypted file when specified, exiting, or opening a new file. 
 * Alert user when no encrypted file is "loaded" into the program. 
