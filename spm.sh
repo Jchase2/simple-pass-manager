@@ -19,6 +19,11 @@ ENDVAR="END" #End of block delimiter.
 USEKEY="" # Name of private key to encrypt with.
 CHKVAR="" #Check if string exists for use in other functions.
 
+# Check if GPG is installed. 
+
+type gpg >/dev/null 2>&1 || { echo $'\n' >&2 "GPG does not appear to be installed, exiting." $'\n'; exit 1; }
+
+
 #Read in filename of GPG file.
 
 gpg_function(){
