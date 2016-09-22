@@ -78,6 +78,8 @@ input_function(){
       search_function
    elif [[ $USRINPUT =~ ^([iI])$ ]] ; then
       new_pw
+   elif [[ $USRINPUT =~ ^([bB])$ ]] ; then
+      insert_block
    elif [[ $USRINPUT =~ ^([kK])$ ]] ; then
       remove_string
    elif [[ $USRINPUT =~ ^([oO])$ ]] ; then
@@ -110,6 +112,7 @@ print_options(){
    echo 'Type 's' to search for a string.'
    echo 'Type 'h' to search for a section.'
    echo 'Type 'i' to insert new information (e.g a username:password combo.)'
+   echo 'Type 'b' to insert several lines of information.'
    echo 'Type 'n' to enter a new section.'
    echo 'Type 'd' to delete a section and its contents.'
    echo 'Type 'k' to delete a string from a section.'
@@ -248,6 +251,39 @@ new_pw(){
    welcome_function
 }
 
+insert_block(){
+
+  file_opened
+  ABLOCK=""
+  BBLOCK=""
+  CHECKRESULTS=""
+  LINECOUNT=0
+  SAVERESULT=""
+  echo $'\n'
+  echo 'Insert data one line at a time, type "quit" and press enter to stop.'
+  echo $'\n'
+  while [ "$ABLOCK" != "quit" ]; do
+    LINECOUNT=$((LINECOUNT+1))
+    echo -n "Line "$LINECOUNT": "
+    read -e ABLOCK
+    if [ "$ABLOCK" != "quit" ]; then
+      BBLOCK+=$'\n'$ABLOCK
+    fi 
+  done
+  echo -n "Would you like to review input?: "
+  read CHECKRESULTS
+  if [[ "$CHECKRESULTS" =~ [yY](es)* ]]; then
+    echo "$BBLOCK" | less
+    echo -n "Save changes?: "
+    read SAVERESULT
+    if [[ "$SAVERESULT" =~ [yY](es)* ]]; then
+      PVAR+=$'\n'$BBLOCK
+      welcome_function
+    fi
+  fi
+  PVAR+=$'\n'$BBLOCK
+  welcome_function 
+}
 
 new_file(){
    echo -n "Enter file name: "
