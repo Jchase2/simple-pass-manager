@@ -99,6 +99,9 @@ swap while there's enough ram. (The script makes sure there's at least 100MB of 
 I'll probably keep adding features to this as time goes on. Any pull requests
 are welcomed. 
 
+* Rewrite insert function to be slightly more structured for delimiting. (Potentially?) 
+* Improve sorting based on delimiters for lines. (Potentially?) 
+* Improve header searching by allowing user to list headers during search dialogue.  
 * Test on other shells. 
 * GPG key creation (maybe). 
 * Make user input section when removing a line, only remove from that section. 
