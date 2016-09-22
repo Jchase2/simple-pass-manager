@@ -81,6 +81,8 @@ input_function(){
    elif [[ $USRINPUT =~ ^([hH])$ ]] ; then
       SGLOBV=1
       search_function
+   elif [[ $USRINPUT =~ ^([lL])$ ]] ; then
+      list_sections
    elif [[ $USRINPUT =~ ^([iI])$ ]] ; then
       new_pw
    elif [[ $USRINPUT =~ ^([bB])$ ]] ; then
@@ -116,6 +118,7 @@ print_options(){
    echo 'Type 'r' to read the entire file.'
    echo 'Type 's' to search for a string.'
    echo 'Type 'h' to search for a section.'
+   echo 'Type 'l' to list all sections / headers.'
    echo 'Type 'i' to insert a single new line. (e.g a username:password combo.)'
    echo 'Type 'b' to insert multiple lines at a time.'
    echo 'Type 'n' to create a new section.'
@@ -181,6 +184,17 @@ search_function() {
       echo "This shouldn't happen."
       welcome_function
    fi
+}
+
+list_sections() {
+   file_opened
+   echo -n 'List of section headers:'
+   echo $'\n'
+   HSTORE=""
+   HSTORE=$(sed -n "/====.*====/p" <<< "$PVAR")
+   HSTORE=$(grep -v "==== $ENDVAR ====" <<< "$HSTORE")
+   echo "$HSTORE"
+   welcome_function
 }
 
 check_mem(){

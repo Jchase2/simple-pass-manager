@@ -55,6 +55,7 @@ Type 'o' to open a password file.
 Type 'r' to read the entire file.
 Type 's' to search for a string.
 Type 'h' to search for a section.
+Type 'l' to list all sections / headers.
 Type 'i' to insert a single new line. (e.g a username:password combo.)
 Type 'b' to insert multiple lines at a time.
 Type 'n' to create a new section.
@@ -100,6 +101,5 @@ are welcomed.
 
 * Test on other shells. 
 * GPG key creation (maybe). 
-* List all sections. 
 * Make user input section when removing a line, only remove from that section. 
 * Only prompt to overwrite encrypted file when specified, exiting, or opening a new file. 
