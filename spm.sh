@@ -107,13 +107,13 @@ input_function(){
 
 print_options(){
    echo $'\n'
-   echo 'Type 'o' to open an existing encrypted pw file.'
+   echo 'Type 'o' to open a password file.'
    echo 'Type 'r' to read the entire file.'
    echo 'Type 's' to search for a string.'
    echo 'Type 'h' to search for a section.'
-   echo 'Type 'i' to insert new information (e.g a username:password combo.)'
-   echo 'Type 'b' to insert several lines of information.'
-   echo 'Type 'n' to enter a new section.'
+   echo 'Type 'i' to insert a single new line. (e.g a username:password combo.)'
+   echo 'Type 'b' to insert multiple lines at a time.'
+   echo 'Type 'n' to create a new section.'
    echo 'Type 'd' to delete a section and its contents.'
    echo 'Type 'k' to delete a string from a section.'
    echo 'Type 'f' to create and open a new encrypted pw file.'
