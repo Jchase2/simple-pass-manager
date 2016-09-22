@@ -165,12 +165,12 @@ search_function() {
               again
            fi
    elif [ $tmpresult -eq '0' ] ; then
-           echo -n 'Type username to search for: '
+           echo -n 'Type string to search for: '
            read VVAR
            string_exists "$VVAR"
            if [ $CHKVAR -eq 0 ]; then
               echo $'\n'
-              NVAR=$(sed -n "/$VVAR/p" <<< "$PVAR")
+              NVAR=$(grep -e "$VVAR" <<< "$PVAR")
               echo "$NVAR"
               again
            else
