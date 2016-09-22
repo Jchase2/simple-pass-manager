@@ -27,7 +27,6 @@ gpg_function(){
   echo -n "GPG Encrypted Password File Path: "
   read -e pwfile
   PVAR=$(gpg --decrypt $pwfile)
-  echo $'\n'
   welcome_function
 }
 
@@ -48,6 +47,7 @@ backup_function(){
 
 #welcome function
 welcome_function(){
+   echo $'\n'
    echo 'Welcome to simple-password-manager.'
    echo 'Type '?' or 'help' to print options.'
    read -r -p "Command: " GLOBV
@@ -118,7 +118,6 @@ print_options(){
    echo 'Type 'k' to delete a string from a section.'
    echo 'Type 'f' to create and open a new encrypted pw file.'
    echo 'Type 'q' to quit.'
-   echo $'\n'
    welcome_function
 }
 
@@ -139,7 +138,6 @@ file_opened(){
    if [ -z "$PVAR" ]; then
            echo $'\n'
            echo 'No password file has been opened, type "o"'
-           echo $'\n'
            welcome_function
    fi
 }
@@ -208,7 +206,6 @@ new_pw(){
    if [ $CHKVAR -eq 1 ]; then
       echo $'\n'
       echo "Section does not exist."
-      echo $'\n'
       welcome_function
    fi
    backup_function
@@ -227,7 +224,6 @@ new_pw(){
             echo 'ERROR: PW is the same as a header name. This can'
             echo 'create conflicts where removing a pw removes' 
             echo 'a header name... Operation not complete.'
-            echo $'\n'
             welcome_function
         fi
          echo "Continuing Anyway"
@@ -291,7 +287,6 @@ new_file(){
    get_key
    echo "---simple-pass-manager file---" | gpg -o "$pwfile" --encrypt --recipient "$USEKEY"
    PVAR=$(gpg --decrypt $pwfile)
-   echo $'\n'
    welcome_function
 }
 
@@ -349,7 +344,6 @@ remove_section(){
   else
      echo $'\n'
      echo "Section not found."
-     echo $'\n'
      welcome_function
   fi
 }
@@ -369,7 +363,6 @@ remove_string(){
   else
      echo $'\n'
      echo "String not found."
-     echo $'\n'
      welcome_function
   fi
 }
