@@ -162,7 +162,8 @@ search_function() {
            string_exists "==== $VAR ===="
            echo $'\n'
            if [ $CHKVAR -eq 0 ]; then
-              AVAR=$(sed -n "/==== $VAR ====/,/$ENDVAR/p" <<< "$PVAR")
+              BBVAR=$(grep -i -e "==== $VAR ====" <<< "$PVAR")
+              AVAR=$(sed -n "/$BBVAR/,/$ENDVAR/p" <<< "$PVAR")
               echo "$AVAR"
               again
            else
