@@ -132,12 +132,14 @@ print_options(){
 
 # Check if string exists in pwfile.
 string_exists(){
-   pattern=$1
-   if [[ "$PVAR" == *${pattern}* ]]; then
-      CHKVAR=0 #Exists...
-   else
-      CHKVAR=1
-   fi
+  pattern=$1
+  lower_a="$pattern" | awk '{print tolower($0)}'
+  lower_b="$PVAR" | awk '{print tolower($0)}'
+  if [[ "$lower_b" == *${lower_a}* ]]; then
+    CHKVAR=0 #Exists...
+  else
+    CHKVAR=1
+  fi
 }
 
 #Check if gpg file is opened, go to welcome if no.
@@ -173,7 +175,7 @@ search_function() {
            string_exists "$VVAR"
            if [ $CHKVAR -eq 0 ]; then
               echo $'\n'
-              NVAR=$(grep -e "$VVAR" <<< "$PVAR")
+              NVAR=$(grep -i -e "$VVAR" <<< "$PVAR")
               echo "$NVAR"
               again
            else
