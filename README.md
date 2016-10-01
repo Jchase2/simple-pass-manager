@@ -106,4 +106,3 @@ are welcomed.
 * GPG key creation (maybe). 
 * Make user input section when removing a line, only remove from that section. 
 * Only prompt to overwrite encrypted file when specified, exiting, or opening a new file. 
-* Ignore case when searching for a line...
