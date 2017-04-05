@@ -12,7 +12,7 @@ Simple shell gpg password manager.
 * Allows user to search for sections or individual lines. 
 * Allows user to read entire contents of the "file". 
 
-##Requirements
+## Requirements
 
 This script relies on GPG and was written and tested using BASH.
 You should also have an existing GPG key. 
