@@ -11,7 +11,7 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #Library General Public License for more details.
 
-# Variables invokation and description.
+# Variables invocation and description.
 
 GLOBV="" #Stores initial user input.
 SGLOBV="" #Choice of header or string for search function.
@@ -129,17 +129,18 @@ print_options(){
    welcome_function
 }
 
-
-# Check if string exists in pwfile.
+# Check if string exists...
 string_exists(){
   pattern=$1
   lower_a="$pattern" | awk '{print tolower($0)}'
   lower_b="$PVAR" | awk '{print tolower($0)}'
-  if [[ "$lower_b" == *${lower_a}* ]]; then
-    CHKVAR=0 #Exists...
-  else
-    CHKVAR=1
-  fi
+  for s in "$lower_b"; do
+    if case ${s} in *"${lower_a}"*) true;; *) false;; esac; then
+      CHKVAR=0 # Exists...
+    else
+      CHKVAR=1
+    fi
+  done
 }
 
 #Check if gpg file is opened, go to welcome if no.
