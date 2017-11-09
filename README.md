@@ -2,6 +2,8 @@
 Simple shell gpg password manager. 
 [A DnE MbN project.](http://mbn.darknedgy.net/DnE_Labs/simple-pass-manager)
 
+See also, the (slightly more secure) ocaml version: https://github.com/Jchase2/ocaml-pass
+
 ## Features
 
 * Wrapper for managing passwords via GPG.
